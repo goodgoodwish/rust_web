@@ -9,7 +9,7 @@ use hello::ThreadPool;
 
 fn main() {
     let listener = TcpListener::bind("127.0.0.1:17878").unwrap();
-    let pool = ThreadPool::new(4);
+    let pool = ThreadPool::new(5);
 
     for stream in listener.incoming() {
         let stream = stream.unwrap();
@@ -35,7 +35,7 @@ fn handle_connection(mut stream: TcpStream) {
     let (status_line, filename) = if buffer.starts_with(get) {
         ("HTTP/1.1 200 OK \r\n\r\n ", "hello.html")
     } else if buffer.starts_with(sleep) {
-        thread::sleep(Duration::from_secs(5));
+        thread::sleep(Duration::from_secs(8));
         ("HTTP/1.1 200 OK\r\n\r\n", "hello.html")
     }
     else {
