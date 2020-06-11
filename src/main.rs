@@ -15,7 +15,6 @@ fn main() {
             handle_connection(stream);
         });
 
-        // println!("Connection good.")
     }
 }
 
