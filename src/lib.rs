@@ -8,7 +8,7 @@ type Job = Box<dyn FnOnce() + Send + 'static>;
 
 pub struct Worker {
     id: usize,
-    thread: thread::JoinHandle<()>,
+    thread: Option<thread::JoinHandle<()>>,
 }
 
 impl Worker {
@@ -20,7 +20,7 @@ impl Worker {
         });
         Worker {
             id,
-            thread,
+            thread: Some(thread),
         }
     }
 }
@@ -53,5 +53,16 @@ impl ThreadPool {
         let job = Box::new(f);
         self.sender.send(job).unwrap();
 
+    }
+}
+
+impl Drop for ThreadPool {
+    fn drop(&mut self) {
+        for worker in &mut self.workers {
+            println!("");
+            if let Some(thread) = worker.thread.take() {
+                thread.join().unwrap();
+            }
+        }
     }
 }
